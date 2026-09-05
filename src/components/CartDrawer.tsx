@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { getServiceImageUrl } from '../data/mockData';
 import {
   X,
   Plus,
@@ -222,16 +223,23 @@ export const CartDrawer: React.FC = () => {
                     <div className="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100 overflow-hidden">
                       {cart.map((item) => (
                         <div key={item.service.id} className="p-3.5 flex items-center justify-between gap-3">
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-sm text-slate-900 truncate">
-                              {item.service.name}
-                            </h4>
-                            <div className="flex items-center gap-1.5 text-xs text-slate-700 mt-0.5">
-                              <span className="px-1.5 py-0.2 rounded-sm bg-slate-100 text-[10px] font-semibold">
-                                {item.service.categoryName}
-                              </span>
-                              <span>•</span>
-                              <span>₹{item.service.price}/{item.service.unitLabel}</span>
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                            <img
+                              src={getServiceImageUrl(item.service)}
+                              alt={item.service.name}
+                              className="w-12 h-12 rounded-xl object-cover border border-slate-100 shrink-0 bg-slate-50"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <h4 className="font-bold text-sm text-slate-900 truncate">
+                                {item.service.name}
+                              </h4>
+                              <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
+                                <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-[10px] font-semibold text-slate-600">
+                                  {item.service.categoryName}
+                                </span>
+                                <span>•</span>
+                                <span className="font-semibold text-slate-700">₹{item.service.price}/{item.service.unitLabel}</span>
+                              </div>
                             </div>
                           </div>
 

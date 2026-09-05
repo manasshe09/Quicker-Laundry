@@ -1,15 +1,119 @@
 import { ServiceItem, Address, PickupSlot, Coupon, Order, AppNotification } from '../types';
 
 export const SERVICE_CATEGORIES = [
-  { id: 'all', name: 'All Services', icon: 'Sparkles', color: 'bg-cyan-600 text-white' },
-  { id: 'wash', name: '1. Wash (Kg)', icon: 'Layers', color: 'bg-blue-600 text-white' },
-  { id: 'mens_wear', name: "2. Men's Wear", icon: 'Shirt', color: 'bg-indigo-600 text-white' },
-  { id: 'ladies_wear', name: "3. Ladies' Wear", icon: 'Sparkles', color: 'bg-pink-600 text-white' },
-  { id: 'home_furnishings', name: '4. Home & Furnishings', icon: 'Home', color: 'bg-emerald-600 text-white' },
-  { id: 'shoes', name: '5. Shoes', icon: 'Footprints', color: 'bg-amber-600 text-white' },
-  { id: 'soft_toys', name: '6. Soft Toys', icon: 'Smile', color: 'bg-purple-600 text-white' },
-  { id: 'special_services', name: 'Special Services', icon: 'ShieldCheck', color: 'bg-rose-600 text-white' },
+  {
+    id: 'all',
+    name: 'All Services',
+    icon: 'Sparkles',
+    color: 'bg-slate-900 text-white',
+    imageUrl: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=600&q=80',
+    tagline: 'Complete wardrobe, linens & shoe care',
+  },
+  {
+    id: 'wash',
+    name: '1. Wash (Kg)',
+    icon: 'Layers',
+    color: 'bg-blue-600 text-white',
+    imageUrl: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=600&q=80',
+    tagline: 'Automated drum wash, fold & steam press',
+  },
+  {
+    id: 'mens_wear',
+    name: "2. Men's Wear",
+    icon: 'Shirt',
+    color: 'bg-indigo-600 text-white',
+    imageUrl: 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80',
+    tagline: 'Shirts, trousers, suits & sherwanis',
+  },
+  {
+    id: 'ladies_wear',
+    name: "3. Ladies' Wear",
+    icon: 'Sparkles',
+    color: 'bg-pink-600 text-white',
+    imageUrl: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80',
+    tagline: 'Pattu silk sarees, lehengas & kurtas',
+  },
+  {
+    id: 'home_furnishings',
+    name: '4. Home & Furnishings',
+    icon: 'Home',
+    color: 'bg-emerald-600 text-white',
+    imageUrl: 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=600&q=80',
+    tagline: 'Blankets, quilts, bedsheets & curtains',
+  },
+  {
+    id: 'shoes',
+    name: '5. Shoes',
+    icon: 'Footprints',
+    color: 'bg-amber-600 text-white',
+    imageUrl: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80',
+    tagline: 'Sneaker deep spa & leather polish',
+  },
+  {
+    id: 'soft_toys',
+    name: '6. Soft Toys',
+    icon: 'Smile',
+    color: 'bg-purple-600 text-white',
+    imageUrl: 'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=600&q=80',
+    tagline: 'Hypoallergenic sanitization for plushies',
+  },
+  {
+    id: 'special_services',
+    name: 'Special Services',
+    icon: 'ShieldCheck',
+    color: 'bg-rose-600 text-white',
+    imageUrl: 'https://images.unsplash.com/photo-1489274495757-95c7c837b101?auto=format&fit=crop&w=600&q=80',
+    tagline: 'Starching, saree roll press & steam iron',
+  },
 ] as const;
+
+export const getServiceImageUrl = (item: { id?: string; categoryId?: string; name?: string; imageUrl?: string }): string => {
+  if (item.imageUrl) return item.imageUrl;
+  const id = (item.id || '').toLowerCase();
+  const name = (item.name || '').toLowerCase();
+  const cat = (item.categoryId || '').toLowerCase();
+
+  // Specific item ID matches
+  if (id === 'wash-standard' || id === 'wash-only') return 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=600&q=80';
+  if (id === 'wash-fold') return 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=600&q=80';
+  if (id === 'wash-iron-only' || id === 'special-iron-piece') return 'https://images.unsplash.com/photo-1489274495757-95c7c837b101?auto=format&fit=crop&w=600&q=80';
+
+  if (name.includes('shirt') || name.includes('t-shirt')) return 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('trouser') || name.includes('jean')) return 'https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('coat') || name.includes('blazer')) return 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('suit')) return 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('sherwani')) return 'https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?auto=format&fit=crop&w=600&q=80';
+
+  if (name.includes('lehenga')) return 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('pattu') || name.includes('saree')) return 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('kurta') || name.includes('kameez') || name.includes('salwar')) return 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('blouse')) return 'https://images.unsplash.com/photo-1564257631407-4deb129f0425?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('dress') || name.includes('gown')) return 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=600&q=80';
+
+  if (name.includes('blanket')) return 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('quilt') || name.includes('duvet')) return 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('bedsheet')) return 'https://images.unsplash.com/photo-1631679706909-1844bbd07221?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('carpet') || name.includes('rug')) return 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('curtain')) return 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80';
+
+  if (name.includes('leather')) return 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('sports') || name.includes('sneaker')) return 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('canvas')) return 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('school') || (cat === 'shoes' && name.includes('child'))) return 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('chappal') || name.includes('sandal')) return 'https://images.unsplash.com/photo-1603808033192-082d6919d3e1?auto=format&fit=crop&w=600&q=80';
+  if (cat === 'shoes') return 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80';
+
+  if (cat === 'soft_toys' || name.includes('toy')) return 'https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=600&q=80';
+  if (name.includes('starch')) return 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?auto=format&fit=crop&w=600&q=80';
+
+  // Category fallback
+  if (cat === 'wash') return 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?auto=format&fit=crop&w=600&q=80';
+  if (cat === 'mens_wear') return 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=600&q=80';
+  if (cat === 'ladies_wear') return 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80';
+  if (cat === 'home_furnishings') return 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=600&q=80';
+
+  return 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=600&q=80';
+};
 
 export const INITIAL_SERVICES: ServiceItem[] = [
   // ==========================================

@@ -65,13 +65,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddressModal }) => {
           <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
         </div>
 
-        {/* Firebase Live Cloud Status Pill */}
+        {/* Live Service Availability Indicator */}
         <div
-          className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-300/60 text-[11px] font-bold text-amber-900"
-          title={`Firebase Cloud Database Connected: ${firebaseProjectId}`}
+          className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50/90 border border-emerald-200/80 text-[11px] font-semibold text-emerald-800"
+          title="Quicker Hub Open • Express Doorstep Pickup active in your area"
         >
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Firebase Cloud: {firebaseProjectId}</span>
+          <span>Open Now • 60-Min Pickup Available</span>
         </div>
 
         {/* Right Action Icons */}

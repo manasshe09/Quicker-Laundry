@@ -33,6 +33,7 @@ export interface ServiceItem {
   active: boolean;
   iconName: string;
   careNotes?: string;
+  imageUrl?: string;
 }
 
 export interface CartItem {
