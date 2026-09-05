@@ -14,9 +14,11 @@ import { OrderTrackingModal } from './components/OrderTrackingModal';
 import { AuthModal } from './components/AuthModal';
 import { AddressModal } from './components/AddressModal';
 import { AdminDashboard } from './components/AdminDashboard';
+import { PWAInstallModal } from './components/PWAInstallModal';
+import { OfflineIndicator } from './components/OfflineIndicator';
 
 const MainLayout: React.FC = () => {
-  const { activeTab, isAdminMode } = useApp();
+  const { activeTab, isAdminMode, isInstallModalOpen, setIsInstallModalOpen } = useApp();
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
 
   return (
@@ -56,6 +58,11 @@ const MainLayout: React.FC = () => {
         isOpen={isAddressModalOpen}
         onClose={() => setIsAddressModalOpen(false)}
       />
+      <PWAInstallModal
+        isOpen={isInstallModalOpen}
+        onClose={() => setIsInstallModalOpen(false)}
+      />
+      <OfflineIndicator />
     </div>
   );
 };

@@ -49,12 +49,12 @@ export const AdminDashboard: React.FC = () => {
   const [showAddService, setShowAddService] = useState(false);
   const [newServiceForm, setNewServiceForm] = useState<Partial<ServiceItem>>({
     name: '',
-    categoryId: 'wash_iron',
-    categoryName: 'Wash & Iron',
-    price: 49,
-    unitLabel: 'piece',
-    pricingType: 'per_piece',
-    turnaroundHours: 36,
+    categoryId: 'wash',
+    categoryName: '1. Wash',
+    price: 100,
+    unitLabel: 'kg',
+    pricingType: 'per_kg',
+    turnaroundHours: 24,
     active: true,
     audience: 'general',
     description: '',
@@ -114,6 +114,14 @@ export const AdminDashboard: React.FC = () => {
     if (!newServiceForm.name || !newServiceForm.price) return;
 
     const catNameMap: Record<ServiceCategoryId, string> = {
+      all: 'All Services',
+      wash: '1. Wash',
+      mens_wear: "2. Men's Wear",
+      ladies_wear: "3. Ladies' Wear",
+      home_furnishings: '4. Home & Furnishings',
+      shoes: '5. Shoes',
+      soft_toys: '6. Soft Toys',
+      special_services: 'Special Services',
       wash_iron: 'Wash & Iron',
       dry_cleaning: 'Dry Cleaning',
       wash_fold: 'Wash & Fold',
@@ -125,8 +133,8 @@ export const AdminDashboard: React.FC = () => {
     const created: ServiceItem = {
       id: `svc-${Date.now()}`,
       name: newServiceForm.name,
-      categoryId: (newServiceForm.categoryId as ServiceCategoryId) || 'wash_iron',
-      categoryName: catNameMap[(newServiceForm.categoryId as ServiceCategoryId) || 'wash_iron'],
+      categoryId: (newServiceForm.categoryId as ServiceCategoryId) || 'wash',
+      categoryName: catNameMap[(newServiceForm.categoryId as ServiceCategoryId) || 'wash'],
       price: Number(newServiceForm.price),
       unitLabel: newServiceForm.unitLabel || 'piece',
       pricingType: newServiceForm.pricingType || 'per_piece',
@@ -434,11 +442,13 @@ export const AdminDashboard: React.FC = () => {
                     }
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold"
                   >
-                    <option value="wash_iron">Wash & Iron</option>
-                    <option value="dry_cleaning">Dry Cleaning</option>
-                    <option value="wash_fold">Wash & Fold</option>
-                    <option value="ironing">Steam Ironing</option>
-                    <option value="special_care">Special Care</option>
+                    <option value="wash">1. Wash</option>
+                    <option value="mens_wear">2. Men's Wear</option>
+                    <option value="ladies_wear">3. Ladies' Wear</option>
+                    <option value="home_furnishings">4. Home & Furnishings</option>
+                    <option value="shoes">5. Shoes</option>
+                    <option value="soft_toys">6. Soft Toys</option>
+                    <option value="special_services">Special Services</option>
                   </select>
                 </div>
               </div>

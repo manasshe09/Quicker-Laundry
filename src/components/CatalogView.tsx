@@ -17,6 +17,10 @@ import {
   ShieldCheck,
   Check,
   Clock,
+  Footprints,
+  Smile,
+  Home,
+  PackageCheck,
 } from 'lucide-react';
 
 export const CatalogView: React.FC = () => {
@@ -42,6 +46,7 @@ export const CatalogView: React.FC = () => {
     { id: 'men', label: "Men's" },
     { id: 'women', label: "Women's" },
     { id: 'household', label: 'Household & Linen' },
+    { id: 'kids', label: 'Kids & Toys' },
   ];
 
   // Filtering services based on category, audience, and search query (PRD Section 10: Smart search)
@@ -76,10 +81,12 @@ export const CatalogView: React.FC = () => {
 
   const getItemIcon = (item: ServiceItem) => {
     if (item.pricingType === 'per_kg') return Scale;
-    if (item.categoryId === 'dry_cleaning') return Sparkles;
-    if (item.categoryId === 'ironing') return Flame;
-    if (item.categoryId === 'special_care') return ShieldCheck;
-    if (item.categoryId === 'wash_fold') return Layers;
+    if (item.categoryId === 'shoes') return Footprints;
+    if (item.categoryId === 'soft_toys') return Smile;
+    if (item.categoryId === 'home_furnishings') return Home;
+    if (item.categoryId === 'wash') return Layers;
+    if (item.categoryId === 'ladies_wear') return Sparkles;
+    if (item.categoryId === 'special_services') return Sparkles;
     return Shirt;
   };
 

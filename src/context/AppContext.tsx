@@ -24,15 +24,22 @@ import {
   syncOrderStatusToFirebase,
   subscribeToFirebaseOrders,
   firebaseConfig,
+  signInWithGooglePopup,
+  logOutFromFirebase,
+  onAuthUserChanged,
 } from '../lib/firebase';
 
 interface AppContextType {
   user: UserProfile;
   setUser: React.Dispatch<React.SetStateAction<UserProfile>>;
   loginWithOtp: (phone: string, name?: string) => void;
+  loginWithGoogle: (customUser?: { name: string; email: string }) => Promise<{ success: boolean; error?: string; isConfigMissing?: boolean }>;
+  loginAsDemoUser: (provider: 'google' | 'phone') => void;
   logout: () => void;
   isAuthModalOpen: boolean;
   setIsAuthModalOpen: (open: boolean) => void;
+  isInstallModalOpen: boolean;
+  setIsInstallModalOpen: (open: boolean) => void;
 
   // Firebase integration info
   firebaseConnected: boolean;
@@ -110,7 +117,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const LOCAL_STORAGE_KEY_ORDERS = 'quicker_laundry_orders_v1';
 const LOCAL_STORAGE_KEY_ADDR = 'quicker_laundry_addresses_v1';
-const LOCAL_STORAGE_KEY_SERVICES = 'quicker_laundry_services_v1';
+const LOCAL_STORAGE_KEY_SERVICES = 'quicker_laundry_services_v2';
 const LOCAL_STORAGE_KEY_USER = 'quicker_laundry_user_v1';
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -134,6 +141,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
 
   // Services Catalog
   const [services, setServices] = useState<ServiceItem[]>(() => {
@@ -334,19 +342,93 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       name: name || user.name || 'Quicker Customer',
       phone: phone.startsWith('+91') ? phone : `+91 ${phone}`,
       email: `${(name || 'customer').toLowerCase().replace(/\s+/g, '')}@example.com`,
+      authProvider: 'phone',
       isGuest: false,
     };
     setUser(updatedUser);
     setIsAuthModalOpen(false);
   };
 
-  const logout = () => {
+  const loginWithGoogle = async (
+    customUser?: { name: string; email: string }
+  ): Promise<{ success: boolean; error?: string; isConfigMissing?: boolean }> => {
+    // If a custom Google account was entered or fallback triggered
+    if (customUser) {
+      const updatedUser: UserProfile = {
+        id: `google-${Date.now()}`,
+        name: customUser.name || 'Google Customer',
+        phone: user.phone || '',
+        email: customUser.email || 'user@gmail.com',
+        authProvider: 'google',
+        isGuest: false,
+      };
+      setUser(updatedUser);
+      setIsAuthModalOpen(false);
+      return { success: true };
+    }
+
+    try {
+      const res = await signInWithGooglePopup();
+      if (res.success && res.user) {
+        const gUser = res.user;
+        const updatedUser: UserProfile = {
+          id: gUser.uid,
+          name: gUser.displayName || 'Google Customer',
+          phone: gUser.phoneNumber || user.phone || '',
+          email: gUser.email || '',
+          photoURL: gUser.photoURL || undefined,
+          authProvider: 'google',
+          isGuest: false,
+        };
+        setUser(updatedUser);
+        setIsAuthModalOpen(false);
+        return { success: true };
+      }
+      return {
+        success: false,
+        error: res.error,
+        isConfigMissing: res.isConfigMissing,
+      };
+    } catch (err: any) {
+      const isConfigMissing =
+        err?.code === 'auth/configuration-not-found' ||
+        err?.message?.includes('configuration-not-found');
+      return {
+        success: false,
+        error: isConfigMissing
+          ? 'Firebase Authentication or Google Provider is not enabled yet in your Firebase Console.'
+          : err?.message || 'Google Sign-In failed',
+        isConfigMissing,
+      };
+    }
+  };
+
+  const loginAsDemoUser = (provider: 'google' | 'phone') => {
+    const updatedUser: UserProfile = {
+      id: `demo-${provider}-${Date.now()}`,
+      name: provider === 'google' ? 'Kiran Kumar (Google)' : 'Kiran Kumar',
+      phone: '+91 98765 43210',
+      email: 'kiran.kumar@gmail.com',
+      authProvider: provider,
+      isGuest: false,
+    };
+    setUser(updatedUser);
+    setIsAuthModalOpen(false);
+  };
+
+  const logout = async () => {
+    try {
+      await logOutFromFirebase();
+    } catch (e) {
+      // safe fallback
+    }
     setUser({
       id: `guest-${Date.now()}`,
       name: 'Guest Customer',
       phone: '',
       email: '',
       isGuest: true,
+      authProvider: 'guest',
     });
   };
 
@@ -531,9 +613,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         user,
         setUser,
         loginWithOtp,
+        loginWithGoogle,
+        loginAsDemoUser,
         logout,
         isAuthModalOpen,
         setIsAuthModalOpen,
+        isInstallModalOpen,
+        setIsInstallModalOpen,
         services,
         updateService,
         addService,

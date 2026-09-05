@@ -11,14 +11,21 @@ import {
   MessageCircle,
   X,
   ChevronDown,
+  LogIn,
+  User,
+  Download,
+  Smartphone,
 } from 'lucide-react';
 
 interface HeaderProps {
-  onOpenAddresses: () => void;
+  onOpenAddressModal: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenAddresses }) => {
+export const Header: React.FC<HeaderProps> = ({ onOpenAddressModal }) => {
   const {
+    user,
+    setIsAuthModalOpen,
+    setIsInstallModalOpen,
     selectedAddress,
     unreadNotifsCount,
     notifications,
@@ -48,7 +55,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddresses }) => {
 
         {/* Center: Address Selector Pill */}
         <div
-          onClick={onOpenAddresses}
+          onClick={onOpenAddressModal}
           className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer text-xs font-medium text-slate-700 max-w-[200px] truncate"
           title="Change Pickup Address"
         >
@@ -152,6 +159,51 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddresses }) => {
             )}
           </div>
 
+          {/* User Profile / Login Button */}
+          {user.isGuest ? (
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-cyan-700 hover:bg-cyan-800 text-white text-xs font-bold transition shadow-2xs cursor-pointer"
+              title="Sign in with Google or Phone"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sign In</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => setActiveTab('profile')}
+              className="flex items-center gap-1.5 p-1 sm:px-2 sm:py-1 rounded-full border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
+              title={`Logged in as ${user.name}`}
+            >
+              {user.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt={user.name}
+                  referrerPolicy="no-referrer"
+                  className="w-6 h-6 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-600 text-white text-[11px] font-bold flex items-center justify-center">
+                  {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                </div>
+              )}
+              <span className="hidden sm:inline text-xs font-bold text-slate-800 max-w-[80px] truncate">
+                {user.name.split(' ')[0]}
+              </span>
+            </button>
+          )}
+
+          {/* Install App Button */}
+          <button
+            onClick={() => setIsInstallModalOpen(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 text-xs font-bold transition shadow-2xs cursor-pointer"
+            title="Install Quicker as Mobile App or APK"
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Install App</span>
+            <Download className="w-3 h-3 hidden md:inline" />
+          </button>
+
           {/* Admin / Customer Mode Switcher Pill */}
           <button
             onClick={() => setIsAdminMode(!isAdminMode)}
@@ -181,7 +233,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddresses }) => {
 
       {/* Mobile address sub-bar */}
       <div
-        onClick={onOpenAddresses}
+        onClick={onOpenAddressModal}
         className="sm:hidden flex items-center justify-between px-4 py-1.5 bg-slate-50 border-t border-slate-100 text-xs text-slate-700 font-medium cursor-pointer"
       >
         <div className="flex items-center gap-1.5 truncate">

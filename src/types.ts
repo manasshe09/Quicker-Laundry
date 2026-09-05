@@ -1,4 +1,12 @@
 export type ServiceCategoryId =
+  | 'all'
+  | 'wash'
+  | 'mens_wear'
+  | 'ladies_wear'
+  | 'home_furnishings'
+  | 'shoes'
+  | 'soft_toys'
+  | 'special_services'
   | 'laundry'
   | 'wash_iron'
   | 'dry_cleaning'
@@ -147,4 +155,6 @@ export interface UserProfile {
   phone: string;
   email: string;
   isGuest: boolean;
+  photoURL?: string;
+  authProvider?: 'google' | 'phone' | 'guest';
 }

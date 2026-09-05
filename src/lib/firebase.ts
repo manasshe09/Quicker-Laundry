@@ -13,6 +13,14 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { getDatabase, ref, set, update, onValue } from 'firebase/database';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  User as FirebaseUser,
+} from 'firebase/auth';
 import { Order, ServiceItem, Address } from '../types';
 
 // The user's Firebase web app configuration
@@ -33,6 +41,58 @@ export const firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig
 // Initialize Firestore & Realtime Database
 export const db = getFirestore(firebaseApp);
 export const rtdb = getDatabase(firebaseApp);
+export const auth = getAuth(firebaseApp);
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
+
+/**
+ * Sign in using Firebase Google Auth with popup
+ */
+export async function signInWithGooglePopup(): Promise<{
+  success: boolean;
+  user?: FirebaseUser;
+  error?: string;
+  isConfigMissing?: boolean;
+}> {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    return { success: true, user: result.user };
+  } catch (error: any) {
+    console.error('[Firebase Auth] Google Sign-In error:', error);
+    const errorCode = error?.code || '';
+    const errorMsg = error?.message || '';
+    const isConfigMissing =
+      errorCode === 'auth/configuration-not-found' ||
+      errorMsg.includes('configuration-not-found') ||
+      errorCode === 'auth/operation-not-allowed';
+
+    return {
+      success: false,
+      error: isConfigMissing
+        ? 'Firebase Authentication or Google Provider is not enabled yet in your Firebase Console (quicker-billing-dashboard).'
+        : errorMsg || 'Google sign-in could not be completed.',
+      isConfigMissing,
+    };
+  }
+}
+
+/**
+ * Sign out from Firebase Auth
+ */
+export async function logOutFromFirebase(): Promise<void> {
+  try {
+    await firebaseSignOut(auth);
+  } catch (err) {
+    console.warn('[Firebase Auth] Logout error:', err);
+  }
+}
+
+/**
+ * Listen to Firebase Auth state changes
+ */
+export function onAuthUserChanged(callback: (user: FirebaseUser | null) => void) {
+  return onAuthStateChanged(auth, callback);
+}
 
 export interface FirebaseSyncStatus {
   isConnected: boolean;

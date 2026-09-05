@@ -19,6 +19,9 @@ import {
   Layers,
   Flame,
   Scale,
+  Footprints,
+  Smile,
+  Home,
 } from 'lucide-react';
 import { SERVICE_CATEGORIES } from '../data/mockData';
 import { ServiceItem } from '../types';
@@ -52,15 +55,19 @@ export const HomeView: React.FC = () => {
 
   const getCategoryIcon = (id: string) => {
     switch (id) {
-      case 'wash_iron':
-        return Shirt;
-      case 'dry_cleaning':
-        return Sparkles;
-      case 'wash_fold':
+      case 'wash':
         return Layers;
-      case 'ironing':
-        return Flame;
-      case 'special_care':
+      case 'mens_wear':
+        return Shirt;
+      case 'ladies_wear':
+        return Sparkles;
+      case 'home_furnishings':
+        return Home;
+      case 'shoes':
+        return Footprints;
+      case 'soft_toys':
+        return Smile;
+      case 'special_services':
         return ShieldCheck;
       default:
         return Sparkles;
@@ -188,11 +195,10 @@ export const HomeView: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {SERVICE_CATEGORIES.filter((c) => c.id !== 'all').map((category) => {
             const Icon = getCategoryIcon(category.id);
-            const count = services.filter((s) => s.categoryId === category.id).length;
-            const minPrice = Math.min(
-              ...services.filter((s) => s.categoryId === category.id).map((s) => s.price),
-              19
-            );
+            const catServices = services.filter((s) => s.categoryId === category.id);
+            const count = catServices.length;
+            const prices = catServices.map((s) => s.price);
+            const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
 
             return (
               <button
