@@ -1,0 +1,7 @@
+{
+  "name": "Quicker Laundry & Drycleaning",
+  "description": "Fast and simple on-demand laundry, dry cleaning, doorstep pickup scheduling, and live order tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
