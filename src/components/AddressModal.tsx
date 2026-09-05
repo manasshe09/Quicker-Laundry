@@ -21,14 +21,14 @@ export const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onClose }) =
   const [showAddForm, setShowAddForm] = useState(false);
   const [form, setForm] = useState({
     type: 'Home' as 'Home' | 'Work' | 'Other',
-    name: user.name || 'Rahul Sharma',
-    phone: user.phone || '+91 98765 43210',
+    name: user.name || '',
+    phone: user.phone || '',
     houseFlat: '',
     street: '',
     landmark: '',
     area: '',
-    city: 'Bengaluru',
-    pincode: '560102',
+    city: '',
+    pincode: '',
   });
 
   if (!isOpen) return null;
@@ -198,56 +198,71 @@ export const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onClose }) =
 
           {/* List */}
           <div className="space-y-2">
-            {addresses.map((addr) => {
-              const isSelected = selectedAddress.id === addr.id;
-              return (
-                <div
-                  key={addr.id}
-                  onClick={() => {
-                    setSelectedAddress(addr);
-                    onClose();
-                  }}
-                  className={`p-3 rounded-2xl border transition-all cursor-pointer bg-white text-xs ${
-                    isSelected
-                      ? 'border-cyan-600 ring-2 ring-cyan-500/20 shadow-xs'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
+            {addresses.length === 0 && !showAddForm ? (
+              <div className="text-center py-6 px-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                <p className="text-xs text-slate-500 font-medium">
+                  No saved addresses yet.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowAddForm(true)}
+                  className="mt-2.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-2xs"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-black px-1.5 py-0.2 bg-slate-100 rounded uppercase text-[10px]">
-                        {addr.type}
-                      </span>
-                      <span className="font-bold text-slate-900">{addr.name}</span>
+                  + Add Pickup Address
+                </button>
+              </div>
+            ) : (
+              addresses.map((addr) => {
+                const isSelected = selectedAddress?.id === addr.id;
+                return (
+                  <div
+                    key={addr.id}
+                    onClick={() => {
+                      setSelectedAddress(addr);
+                      onClose();
+                    }}
+                    className={`p-3 rounded-2xl border transition-all cursor-pointer bg-white text-xs ${
+                      isSelected
+                        ? 'border-blue-600 ring-2 ring-blue-500/20 shadow-xs'
+                        : 'border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="font-black px-1.5 py-0.2 bg-slate-100 rounded uppercase text-[10px]">
+                          {addr.type}
+                        </span>
+                        <span className="font-bold text-slate-900">{addr.name}</span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {isSelected && (
+                          <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                        )}
+                        {addresses.length > 1 && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteAddress(addr.id);
+                            }}
+                            className="p-1 text-slate-400 hover:text-rose-600"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      {isSelected && (
-                        <CheckCircle2 className="w-4 h-4 text-cyan-700" />
-                      )}
-                      {addresses.length > 1 && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteAddress(addr.id);
-                          }}
-                          className="p-1 text-slate-400 hover:text-rose-600"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
+                    <p className="text-slate-700 mt-1 font-medium">
+                      {addr.houseFlat}, {addr.street}, {addr.area}
+                    </p>
+                    <p className="text-[11px] text-slate-700">
+                      {addr.city} - {addr.pincode} • Phone: {addr.phone}
+                    </p>
                   </div>
-
-                  <p className="text-slate-700 mt-1 font-medium">
-                    {addr.houseFlat}, {addr.street}, {addr.area}
-                  </p>
-                  <p className="text-[11px] text-slate-700">
-                    {addr.city} - {addr.pincode} • Phone: {addr.phone}
-                  </p>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
         </div>
       </div>

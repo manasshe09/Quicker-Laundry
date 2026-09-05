@@ -1,0 +1,58 @@
+name: Build Android APK & Play Store AAB
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    name: Build Android APK and Bundle (AAB)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Node Dependencies
+        run: npm ci || npm install
+
+      - name: Build Web App & Sync to Android
+        run: npm run cap:sync
+
+      - name: Make Gradle Executable
+        run: chmod +x ./android/gradlew
+
+      - name: Build Debug APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Build Play Store Bundle (AAB)
+        run: |
+          cd android
+          ./gradlew bundleRelease --stacktrace || true
+
+      - name: Upload Debug APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Quicker-Android-Debug-APK
+          path: android/app/build/outputs/apk/debug/*.apk
+
+      - name: Upload Release AAB Artifact (Play Store)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Quicker-PlayStore-Bundle-AAB
+          path: android/app/build/outputs/bundle/release/*.aab

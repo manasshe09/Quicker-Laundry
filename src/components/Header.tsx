@@ -52,12 +52,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddressModal }) => {
         {/* Center: Address Selector Pill */}
         <div
           onClick={onOpenAddressModal}
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer text-xs font-medium text-slate-700 max-w-[200px] truncate"
+          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer text-xs font-medium text-slate-700 max-w-[220px] truncate"
           title="Change Pickup Address"
         >
-          <MapPin className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
-          <span className="font-semibold text-slate-900">{selectedAddress.type}:</span>
-          <span className="truncate">{selectedAddress.area || selectedAddress.houseFlat}</span>
+          <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+          {selectedAddress ? (
+            <>
+              <span className="font-semibold text-slate-900">{selectedAddress.type}:</span>
+              <span className="truncate">{selectedAddress.area || selectedAddress.houseFlat}</span>
+            </>
+          ) : (
+            <span className="text-blue-600 font-bold">+ Add Address</span>
+          )}
           <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
         </div>
 
@@ -197,11 +203,19 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddressModal }) => {
         className="sm:hidden flex items-center justify-between px-4 py-1.5 bg-slate-50 border-t border-slate-100 text-xs text-slate-700 font-medium cursor-pointer"
       >
         <div className="flex items-center gap-1.5 truncate">
-          <MapPin className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
-          <span className="font-bold text-slate-900">{selectedAddress.type}:</span>
-          <span className="truncate">{selectedAddress.houseFlat}, {selectedAddress.area}</span>
+          <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+          {selectedAddress ? (
+            <>
+              <span className="font-bold text-slate-900">{selectedAddress.type}:</span>
+              <span className="truncate">{selectedAddress.houseFlat}, {selectedAddress.area}</span>
+            </>
+          ) : (
+            <span className="text-blue-600 font-bold">+ Add Doorstep Address</span>
+          )}
         </div>
-        <span className="text-cyan-700 text-[11px] font-semibold shrink-0">Change</span>
+        <span className="text-blue-600 text-[11px] font-semibold shrink-0">
+          {selectedAddress ? 'Change' : 'Add'}
+        </span>
       </div>
 
       {/* Quick Support Modal */}

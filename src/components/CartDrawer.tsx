@@ -62,14 +62,14 @@ export const CartDrawer: React.FC = () => {
   const [showAddAddressForm, setShowAddAddressForm] = useState(false);
   const [newAddrForm, setNewAddrForm] = useState({
     type: 'Home' as 'Home' | 'Work' | 'Other',
-    name: user.name || 'Rahul Sharma',
-    phone: user.phone || '+91 98765 43210',
+    name: user.name || '',
+    phone: user.phone || '',
     houseFlat: '',
     street: '',
     landmark: '',
     area: '',
-    city: 'Bengaluru',
-    pincode: '560102',
+    city: '',
+    pincode: '',
   });
 
   // Selected payment method
@@ -580,49 +580,62 @@ export const CartDrawer: React.FC = () => {
 
                 {/* Saved addresses cards */}
                 <div className="space-y-2.5">
-                  {addresses.map((addr) => {
-                    const isSelected = selectedAddress.id === addr.id;
-                    return (
-                      <div
-                        key={addr.id}
-                        onClick={() => setSelectedAddress(addr)}
-                        className={`p-3.5 rounded-2xl border transition-all cursor-pointer bg-white ${
-                          isSelected
-                            ? 'border-cyan-600 ring-2 ring-cyan-500/20 shadow-xs'
-                            : 'border-slate-200 hover:border-slate-300'
-                        }`}
+                  {addresses.length === 0 && !showAddAddressForm ? (
+                    <div className="p-5 bg-white rounded-2xl border border-dashed border-slate-300 text-center">
+                      <p className="text-xs text-slate-500 font-medium">No saved addresses for pickup.</p>
+                      <button
+                        type="button"
+                        onClick={() => setShowAddAddressForm(true)}
+                        className="mt-2.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
                       >
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase ${
-                                addr.type === 'Home'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : addr.type === 'Work'
-                                  ? 'bg-purple-100 text-purple-800'
-                                  : 'bg-slate-100 text-slate-800'
-                              }`}
-                            >
-                              {addr.type}
-                            </span>
-                            <span className="font-bold text-xs text-slate-900">{addr.name}</span>
+                        + Add Doorstep Address
+                      </button>
+                    </div>
+                  ) : (
+                    addresses.map((addr) => {
+                      const isSelected = selectedAddress?.id === addr.id;
+                      return (
+                        <div
+                          key={addr.id}
+                          onClick={() => setSelectedAddress(addr)}
+                          className={`p-3.5 rounded-2xl border transition-all cursor-pointer bg-white ${
+                            isSelected
+                              ? 'border-blue-600 ring-2 ring-blue-500/20 shadow-xs'
+                              : 'border-slate-200 hover:border-slate-300'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase ${
+                                  addr.type === 'Home'
+                                    ? 'bg-blue-100 text-blue-800'
+                                    : addr.type === 'Work'
+                                    ? 'bg-purple-100 text-purple-800'
+                                    : 'bg-slate-100 text-slate-800'
+                                }`}
+                              >
+                                {addr.type}
+                              </span>
+                              <span className="font-bold text-xs text-slate-900">{addr.name}</span>
+                            </div>
+                            {isSelected && (
+                              <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                            )}
                           </div>
-                          {isSelected && (
-                            <CheckCircle2 className="w-4 h-4 text-cyan-700" />
-                          )}
-                        </div>
 
-                        <p className="text-xs text-slate-700 mt-2 font-medium">
-                          {addr.houseFlat}, {addr.street}
-                        </p>
-                        <p className="text-[11px] text-slate-700">
-                          {addr.landmark && `Near ${addr.landmark}, `}
-                          {addr.area}, {addr.city} - {addr.pincode}
-                        </p>
-                        <p className="text-[11px] text-slate-700 mt-1">Phone: {addr.phone}</p>
-                      </div>
-                    );
-                  })}
+                          <p className="text-xs text-slate-700 mt-2 font-medium">
+                            {addr.houseFlat}, {addr.street}
+                          </p>
+                          <p className="text-[11px] text-slate-700">
+                            {addr.landmark && `Near ${addr.landmark}, `}
+                            {addr.area}, {addr.city} - {addr.pincode}
+                          </p>
+                          <p className="text-[11px] text-slate-700 mt-1">Phone: {addr.phone}</p>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </div>
             )}
@@ -852,7 +865,7 @@ export const CartDrawer: React.FC = () => {
                   <div className="flex justify-between text-slate-700">
                     <span>Address:</span>
                     <span className="font-medium text-slate-900 truncate max-w-[200px]">
-                      {selectedAddress.houseFlat}, {selectedAddress.area}
+                      {selectedAddress ? `${selectedAddress.houseFlat}, ${selectedAddress.area}` : 'No address selected'}
                     </span>
                   </div>
                   <div className="flex justify-between text-slate-700">

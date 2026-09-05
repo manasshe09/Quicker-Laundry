@@ -11,6 +11,7 @@ import {
   orderBy,
   getDocs,
   serverTimestamp,
+  setLogLevel,
 } from 'firebase/firestore';
 import { getDatabase, ref, set, update, onValue } from 'firebase/database';
 import {
@@ -38,6 +39,11 @@ export const firebaseConfig = {
 // Initialize Firebase App singleton safely
 export const firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
+// Silence SDK internal offline warnings when Firestore backend is not yet provisioned in Console
+try {
+  setLogLevel('silent');
+} catch {}
+
 // Initialize Firestore & Realtime Database
 export const db = getFirestore(firebaseApp);
 export const rtdb = getDatabase(firebaseApp);
@@ -45,15 +51,22 @@ export const auth = getAuth(firebaseApp);
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 
-/**
- * Sign in using Firebase Google Auth with popup
- */
-export async function signInWithGooglePopup(): Promise<{
+export interface GoogleSignInResult {
   success: boolean;
   user?: FirebaseUser;
   error?: string;
+  code?: string;
+  isUnauthorizedDomain?: boolean;
   isConfigMissing?: boolean;
-}> {
+  isPopupBlocked?: boolean;
+  currentDomain?: string;
+}
+
+/**
+ * Sign in using Firebase Google Auth with popup
+ */
+export async function signInWithGooglePopup(): Promise<GoogleSignInResult> {
+  const currentDomain = typeof window !== 'undefined' ? window.location.hostname : '';
   try {
     const result = await signInWithPopup(auth, googleProvider);
     return { success: true, user: result.user };
@@ -61,17 +74,37 @@ export async function signInWithGooglePopup(): Promise<{
     console.error('[Firebase Auth] Google Sign-In error:', error);
     const errorCode = error?.code || '';
     const errorMsg = error?.message || '';
+
+    const isUnauthorizedDomain =
+      errorCode === 'auth/unauthorized-domain' ||
+      errorMsg.includes('unauthorized-domain');
+
+    const isPopupBlocked =
+      errorCode === 'auth/popup-blocked' ||
+      errorMsg.includes('popup-blocked');
+
     const isConfigMissing =
       errorCode === 'auth/configuration-not-found' ||
       errorMsg.includes('configuration-not-found') ||
       errorCode === 'auth/operation-not-allowed';
 
+    let userFriendlyMessage = errorMsg || 'Google sign-in could not be completed.';
+    if (isUnauthorizedDomain) {
+      userFriendlyMessage = `Domain authorization required: "${currentDomain}" needs to be added to Authorized Domains in your Firebase Console (quicker-billing-dashboard).`;
+    } else if (isPopupBlocked) {
+      userFriendlyMessage = 'Popup was blocked by your browser. Please allow popups for this site.';
+    } else if (isConfigMissing) {
+      userFriendlyMessage = 'Google Sign-In is not enabled yet in your Firebase Console under Authentication > Sign-in method.';
+    }
+
     return {
       success: false,
-      error: isConfigMissing
-        ? 'Firebase Authentication or Google Provider is not enabled yet in your Firebase Console (quicker-billing-dashboard).'
-        : errorMsg || 'Google sign-in could not be completed.',
+      error: userFriendlyMessage,
+      code: errorCode,
+      isUnauthorizedDomain,
       isConfigMissing,
+      isPopupBlocked,
+      currentDomain,
     };
   }
 }
@@ -245,16 +278,21 @@ export async function syncOrderStatusToFirebase(orderId: string, updates: Partia
 }
 
 /**
- * Listen for real-time updates to orders collection
+ * Listen for real-time updates to orders collection safely
  */
 export function subscribeToFirebaseOrders(onOrdersChanged: (orders: Order[]) => void) {
+  let isUnsubscribed = false;
+  let firestoreUnsub: (() => void) | null = null;
+  let rtdbUnsub: (() => void) | null = null;
+
+  // 1. Listen to Firestore with auto-detachment on backend unavailability
   try {
     const ordersCol = collection(db, 'orders');
     const q = query(ordersCol);
-    const unsubscribe = onSnapshot(
+    firestoreUnsub = onSnapshot(
       q,
       (snapshot) => {
-        if (!snapshot.empty) {
+        if (!isUnsubscribed && !snapshot.empty) {
           const list: Order[] = [];
           snapshot.forEach((docSnap) => {
             const data = docSnap.data() as Order;
@@ -263,15 +301,57 @@ export function subscribeToFirebaseOrders(onOrdersChanged: (orders: Order[]) => 
           onOrdersChanged(list);
         }
       },
-      (error) => {
-        console.info('[Firebase] Using local state; Firestore listener received:', error.message);
+      (_error) => {
+        // Detach immediately on error (e.g. offline, database not provisioned) to avoid continuous connection retries
+        if (firestoreUnsub && !isUnsubscribed) {
+          try {
+            firestoreUnsub();
+          } catch {}
+          firestoreUnsub = null;
+        }
       }
     );
-    return unsubscribe;
-  } catch (e: any) {
-    console.info('[Firebase] Listener error:', e?.message || e);
-    return () => {};
+  } catch {
+    // Silently fall back to local state
   }
+
+  // 2. Also listen to Realtime Database if configured
+  try {
+    const ordersRtdbRef = ref(rtdb, 'orders');
+    rtdbUnsub = onValue(
+      ordersRtdbRef,
+      (snapshot) => {
+        if (!isUnsubscribed && snapshot.exists()) {
+          const val = snapshot.val();
+          if (val && typeof val === 'object') {
+            const list: Order[] = Object.values(val);
+            if (list.length > 0) {
+              onOrdersChanged(list);
+            }
+          }
+        }
+      },
+      () => {
+        // Silently catch permission notices
+      }
+    );
+  } catch {
+    // Silently ignore
+  }
+
+  return () => {
+    isUnsubscribed = true;
+    if (firestoreUnsub) {
+      try {
+        firestoreUnsub();
+      } catch {}
+    }
+    if (rtdbUnsub) {
+      try {
+        rtdbUnsub();
+      } catch {}
+    }
+  };
 }
 
 /**

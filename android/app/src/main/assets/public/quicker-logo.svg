@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" width="100%" height="100%" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&amp;family=Fredoka:wght@700&amp;family=Nunito:wght@900&amp;display=swap');
+      .quicker-brand-text {
+        font-family: 'Fredoka', 'Nunito', system-ui, -apple-system, sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      .quicker-sub-text {
+        font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+      }
+    </style>
+  </defs>
+
+  <!-- Sparkle Badge above 'er' -->
+  <g transform="translate(372, 44)">
+    <!-- Crescent / Circular bubble outline -->
+    <path 
+      d="M -12,30 C -26,18 -30,-8 -16,-24 C -2,-40 24,-40 38,-24 C 52,-8 48,20 32,32 C 26,37 18,40 10,40" 
+      stroke="#22399A" 
+      stroke-width="5" 
+      stroke-linecap="round" 
+      fill="none"
+    />
+    <!-- Large 4-Point Diamond Sparkle -->
+    <path 
+      d="M 12,-16 C 12,-7 17,-2 26,-2 C 17,-2 12,3 12,12 C 12,3 7,-2 -2,-2 C 7,-2 12,-7 12,-16 Z" 
+      fill="#22399A"
+    />
+    <!-- Small 4-Point Diamond Sparkle -->
+    <path 
+      d="M -4,14 C -4,17 -2,19 1,19 C -2,19 -4,21 -4,24 C -4,21 -6,19 -9,19 C -6,19 -4,17 -4,14 Z" 
+      fill="#22399A"
+    />
+  </g>
+
+  <!-- Main 'Quicker' Brandmark Paths & Glyphs -->
+  <g fill="#22399A">
+    <!-- Distinct Q with stylish cutout and curved tail -->
+    <!-- Q Head -->
+    <path 
+      d="M 68,28 C 96,28 114,46 114,76 C 114,98 102,115 82,122 C 76,124 70,125 64,125 C 36,125 18,107 18,77 C 18,65 22,54 30,46 C 36,40 43,36 51,33 L 53,49 C 47,52 43,56 40,61 C 36,66 34,71 34,77 C 34,97 46,110 64,110 C 82,110 98,96 98,76 C 98,56 86,43 68,43 C 63,43 59,44 55,46 L 52,30 C 57,28 62,28 68,28 Z"
+    />
+    <!-- Q Looping Tail -->
+    <path 
+      d="M 54,98 C 42,98 32,106 32,117 C 32,128 41,136 52,136 C 68,136 84,127 101,114 C 108,126 117,136 127,143 L 138,131 C 127,123 118,112 113,99 C 103,107 90,114 78,118 C 70,121 61,123 54,122 C 49,121 47,119 47,116 C 47,113 49,110 55,108 C 66,105 79,99 90,92 L 81,81 C 72,87 62,98 54,98 Z"
+    />
+
+    <!-- 'u' -->
+    <path 
+      d="M 124,63 L 140,63 L 140,99 C 140,107 146,112 154,112 C 163,112 170,106 170,97 L 170,63 L 186,63 L 186,100 C 186,115 172,126 154,126 C 135,126 124,114 124,99 L 124,63 Z"
+    />
+
+    <!-- 'i' -->
+    <circle cx="206" cy="46" r="8.5" />
+    <rect x="198" y="63" width="16" height="61" rx="4" />
+
+    <!-- 'c' -->
+    <path 
+      d="M 271,78 L 257,84 C 254,77 248,74 241,74 C 231,74 223,82 223,94 C 223,106 231,114 241,114 C 248,114 254,111 258,104 L 272,110 C 265,121 254,126 240,126 C 220,126 206,112 206,94 C 206,75 220,61 240,61 C 255,61 266,68 271,78 Z"
+    />
+
+    <!-- 'k' -->
+    <rect x="281" y="28" width="16" height="96" rx="4" />
+    <path 
+      d="M 326,63 L 305,88 L 328,124 L 309,124 L 293,98 L 293,86 L 310,63 L 326,63 Z"
+    />
+
+    <!-- 'e' -->
+    <path 
+      d="M 374,93 L 341,93 C 342,84 348,77 357,77 C 364,77 370,81 372,87 L 386,81 C 381,70 371,62 357,62 C 339,62 325,75 325,94 C 325,113 338,126 357,126 C 373,126 384,116 388,102 L 373,98 C 371,105 365,111 357,111 C 348,111 342,104 341,96 L 388,96 C 388,95 388,94 388,93 C 388,92 388,92 374,93 Z M 341,84 C 342,80 348,73 357,73 C 365,73 371,79 372,84 L 341,84 Z"
+    />
+
+    <!-- 'r' -->
+    <rect x="398" y="63" width="16" height="61" rx="4" />
+    <path 
+      d="M 412,65 C 418,62 425,61 432,62 L 430,78 C 424,77 417,79 413,83 L 413,124 L 398,124 L 398,63 L 413,63 L 413,65 Z"
+    />
+  </g>
+
+  <!-- Subtitle: "LAUNDRY & DRYCLEANING" -->
+  <text 
+    x="136" 
+    y="148" 
+    fill="#22399A" 
+    font-size="20.5" 
+    font-weight="900" 
+    class="quicker-sub-text"
+  >LAUNDRY&amp; DRYCLEANING</text>
+</svg>
