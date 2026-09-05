@@ -16,10 +16,26 @@ import { AddressModal } from './components/AddressModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { PWAInstallModal } from './components/PWAInstallModal';
 import { OfflineIndicator } from './components/OfflineIndicator';
+import { LoginView } from './components/LoginView';
 
 const MainLayout: React.FC = () => {
-  const { activeTab, isAdminMode, isInstallModalOpen, setIsInstallModalOpen } = useApp();
+  const {
+    user,
+    hasSkippedLogin,
+    setHasSkippedLogin,
+    activeTab,
+    isAdminMode,
+    isInstallModalOpen,
+    setIsInstallModalOpen,
+  } = useApp();
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+
+  // If user is not authenticated and hasn't chosen to explore as guest, show LoginView first
+  const isUserAuthenticated = !user.isGuest && (Boolean(user.phone) || Boolean(user.email));
+
+  if (!isUserAuthenticated && !hasSkippedLogin) {
+    return <LoginView onSkip={() => setHasSkippedLogin(true)} />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-100/70 text-slate-900 flex flex-col font-sans selection:bg-cyan-500 selection:text-white">

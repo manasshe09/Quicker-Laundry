@@ -1,20 +1,14 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { QuickerLogo } from './QuickerLogo';
 import {
-  Sparkles,
   MapPin,
   Bell,
-  UserCheck,
-  ShieldAlert,
   Phone,
   MessageCircle,
   X,
   ChevronDown,
   LogIn,
   User,
-  Download,
-  Smartphone,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -25,18 +19,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddressModal }) => {
   const {
     user,
     setIsAuthModalOpen,
-    setIsInstallModalOpen,
     selectedAddress,
     unreadNotifsCount,
     notifications,
     markNotificationRead,
-    isAdminMode,
-    setIsAdminMode,
     setActiveTrackingOrder,
     orders,
     setActiveTab,
-    firebaseConnected,
-    firebaseProjectId,
   } = useApp();
 
   const [showNotifs, setShowNotifs] = useState(false);
@@ -45,12 +34,19 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddressModal }) => {
   return (
     <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-xs">
       <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-        {/* Brand Logo & Tagline */}
+        {/* Brand Name (Clean Typography, No Graphic Logo) */}
         <div
-          className="flex items-center gap-2 cursor-pointer select-none group"
+          className="flex items-center gap-2 cursor-pointer select-none"
           onClick={() => setActiveTab('home')}
         >
-          <QuickerLogo className="h-9 sm:h-10 w-auto transition-transform group-hover:scale-105" />
+          <div className="flex flex-col">
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 leading-none">
+              Quicker
+            </span>
+            <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-0.5">
+              Laundry &amp; Dry Cleaning
+            </span>
+          </div>
         </div>
 
         {/* Center: Address Selector Pill */}
@@ -192,42 +188,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddressModal }) => {
               </span>
             </button>
           )}
-
-          {/* Install App Button */}
-          <button
-            onClick={() => setIsInstallModalOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 text-xs font-bold transition shadow-2xs cursor-pointer"
-            title="Install Quicker as Mobile App or APK"
-          >
-            <Smartphone className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Install App</span>
-            <Download className="w-3 h-3 hidden md:inline" />
-          </button>
-
-          {/* Admin / Customer Mode Switcher Pill */}
-          <button
-            onClick={() => setIsAdminMode(!isAdminMode)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold transition shadow-xs ${
-              isAdminMode
-                ? 'bg-amber-500 text-white hover:bg-amber-600'
-                : 'bg-slate-800 text-slate-100 hover:bg-slate-900'
-            }`}
-            title="Toggle between Customer App and Operations/Admin Dashboard"
-          >
-            {isAdminMode ? (
-              <>
-                <ShieldAlert className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Admin Mode</span>
-                <span className="sm:hidden">Admin</span>
-              </>
-            ) : (
-              <>
-                <UserCheck className="w-3.5 h-3.5 text-cyan-300" />
-                <span className="hidden sm:inline">Customer App</span>
-                <span className="sm:hidden">App</span>
-              </>
-            )}
-          </button>
         </div>
       </div>
 

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { QuickerLogo } from './QuickerLogo';
 import {
   X,
   Phone,
@@ -112,8 +111,13 @@ export const AuthModal: React.FC = () => {
 
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="flex justify-center mb-2.5">
-            <QuickerLogo className="h-10 w-auto" />
+          <div className="flex flex-col items-center justify-center mb-2">
+            <span className="text-2xl font-black tracking-tight text-slate-900 leading-none">
+              Quicker
+            </span>
+            <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">
+              Laundry &amp; Dry Cleaning
+            </span>
           </div>
           <h2 className="text-xl font-bold text-slate-900 tracking-tight">
             {step === 'phone' ? 'Sign In to Quicker' : 'Verify Mobile Number'}

@@ -111,6 +111,10 @@ interface AppContextType {
   // Admin Mode Toggle
   isAdminMode: boolean;
   setIsAdminMode: (admin: boolean) => void;
+
+  // Initial Welcome / Login state
+  hasSkippedLogin: boolean;
+  setHasSkippedLogin: (skipped: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -119,24 +123,43 @@ const LOCAL_STORAGE_KEY_ORDERS = 'quicker_laundry_orders_v1';
 const LOCAL_STORAGE_KEY_ADDR = 'quicker_laundry_addresses_v1';
 const LOCAL_STORAGE_KEY_SERVICES = 'quicker_laundry_services_v2';
 const LOCAL_STORAGE_KEY_USER = 'quicker_laundry_user_v1';
+const LOCAL_STORAGE_KEY_SKIPPED_LOGIN = 'quicker_skipped_login_v1';
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // User state
+  // First-screen welcome / skipped login state
+  const [hasSkippedLogin, setHasSkippedLoginState] = useState<boolean>(() => {
+    return localStorage.getItem(LOCAL_STORAGE_KEY_SKIPPED_LOGIN) === 'true';
+  });
+
+  const setHasSkippedLogin = (skipped: boolean) => {
+    setHasSkippedLoginState(skipped);
+    if (skipped) {
+      localStorage.setItem(LOCAL_STORAGE_KEY_SKIPPED_LOGIN, 'true');
+    } else {
+      localStorage.removeItem(LOCAL_STORAGE_KEY_SKIPPED_LOGIN);
+    }
+  };
+
+  // User state - defaults to guest so welcome/login page appears first
   const [user, setUser] = useState<UserProfile>(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY_USER);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (parsed && !parsed.isGuest && (parsed.phone || parsed.name)) {
+          return parsed;
+        }
       } catch (e) {
         // fallback
       }
     }
     return {
-      id: 'cust-101',
-      name: 'Rahul Sharma',
-      phone: '+91 98765 43210',
-      email: 'rahul.sharma@example.com',
-      isGuest: false,
+      id: '',
+      name: '',
+      phone: '',
+      email: '',
+      isGuest: true,
+      authProvider: 'guest',
     };
   });
 
@@ -346,6 +369,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isGuest: false,
     };
     setUser(updatedUser);
+    setHasSkippedLogin(true);
     setIsAuthModalOpen(false);
   };
 
@@ -363,6 +387,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isGuest: false,
       };
       setUser(updatedUser);
+      setHasSkippedLogin(true);
       setIsAuthModalOpen(false);
       return { success: true };
     }
@@ -381,6 +406,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           isGuest: false,
         };
         setUser(updatedUser);
+        setHasSkippedLogin(true);
         setIsAuthModalOpen(false);
         return { success: true };
       }
@@ -413,6 +439,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isGuest: false,
     };
     setUser(updatedUser);
+    setHasSkippedLogin(true);
     setIsAuthModalOpen(false);
   };
 
@@ -422,9 +449,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch (e) {
       // safe fallback
     }
+    localStorage.removeItem(LOCAL_STORAGE_KEY_USER);
+    setHasSkippedLogin(false);
     setUser({
-      id: `guest-${Date.now()}`,
-      name: 'Guest Customer',
+      id: '',
+      name: '',
       phone: '',
       email: '',
       isGuest: true,
@@ -671,6 +700,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         coupons,
         isAdminMode,
         setIsAdminMode,
+        hasSkippedLogin,
+        setHasSkippedLogin,
         firebaseConnected,
         firebaseProjectId: firebaseConfig.projectId,
       }}

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { QuickerLogo } from './QuickerLogo';
 import {
   ShieldAlert,
   Package,
@@ -166,9 +165,9 @@ export const AdminDashboard: React.FC = () => {
       <div className="bg-slate-900 text-white rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="bg-white/95 px-2.5 py-1 rounded-xl shadow-xs">
-              <QuickerLogo className="h-6 w-auto" />
-            </div>
+            <span className="text-2xl font-black tracking-tight text-white">
+              Quicker
+            </span>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-extrabold">
               <ShieldAlert className="w-3.5 h-3.5" />
               <span>Operations Hub</span>

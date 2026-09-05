@@ -11,7 +11,6 @@ import {
   PlusSquare,
   Sparkles,
 } from 'lucide-react';
-import { QuickerLogo } from './QuickerLogo';
 
 interface PWAInstallModalProps {
   isOpen: boolean;
@@ -62,8 +61,13 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
 
         {/* Brand Header */}
         <div className="text-center mb-5">
-          <div className="flex justify-center mb-3">
-            <QuickerLogo className="h-10 w-auto" />
+          <div className="flex flex-col items-center justify-center mb-2">
+            <span className="text-2xl font-black tracking-tight text-slate-900 leading-none">
+              Quicker
+            </span>
+            <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">
+              Laundry &amp; Dry Cleaning
+            </span>
           </div>
           <h2 className="font-black text-xl text-slate-900">
             {isInstalled ? 'App Already Installed!' : 'Install Quicker App'}

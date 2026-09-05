@@ -1,6 +1,5 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { QuickerLogo } from './QuickerLogo';
 import {
   Calendar,
   Clock,
